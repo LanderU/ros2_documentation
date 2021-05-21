@@ -88,9 +88,7 @@ Install development tools and ROS tools
      flake8-quotes \
      pytest-repeat \
      pytest-rerunfailures \
-     pytest \
-     importlib-metadata \
-     importlib-resources
+     pytest
 
     # Install additional tools needed for building the dependencies for QNX
     sudo apt update && sudo apt install -y \
@@ -118,6 +116,7 @@ Install development tools and ROS tools
     cmake ..
     make
     export DDSCONF_EXE=$(find ~/cyclonedds -type f -name ddsconf)
+    export IDLC_EXE=$(find ~/cyclonedds -type f -name idlc)
 
 .. code-block:: bash
 
