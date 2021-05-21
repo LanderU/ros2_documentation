@@ -7,14 +7,17 @@ Building ROS 2 for QNX
    :depth: 2
    :local:
 
+
+The following instructions go over the steps for building ROS2 Rolling for QNX including FastRTPS and CycloneDDS RMW implementations.
+
 Overview of the build process
 -----------------------------
 
 Starting with a QNX SDP7.1 installation along with the required cross compiled dependencies, the build process will cross compile ROS 2's source code against SDP7.1 and the cross compiled dependencies.
 Binaries will be generated for the two architectures below:
 
-aarch64le
-x86_64
+- aarch64le
+- x86_64
 
 The generated files can then be transferred to the required target and used. The following document will go over the steps needed to cross compile the dependencies and ROS 2.
 
@@ -70,15 +73,7 @@ Install development tools and ROS tools
      python3-rosdep \
      python3-setuptools \
      python3-vcstool \
-     wget \
-     bc \
-     subversion \
-     autoconf \
-     libtool-bin \
-     libssl-dev \
-     zlib1g-dev \
-     rsync \
-     rename
+     wget
 
    # install some pip packages needed for testing
    python3 -m pip install -U \
@@ -95,10 +90,33 @@ Install development tools and ROS tools
      pytest-rerunfailures \
      pytest \
      importlib-metadata \
-     importlib-resources \
-     Cython \
-     numpy \
-     lark-parser
+     importlib-resources
+
+    # Install additional tools needed for building the dependencies for QNX
+    sudo apt update && sudo apt install -y \
+      bc \
+      subversion \
+      autoconf \
+      libtool-bin \
+      libssl-dev \
+      zlib1g-dev \
+      rsync \
+      rename
+
+    python3 -m pip install -U \
+      Cython \
+      numpy \
+      lark-parser
+
+    # Optional: If CycloneDDS is needed then it has to be build for host first to use dssconf tool required when cross compiling
+    cd ~/
+    git clone https://github.com/eclipse-cyclonedds/cyclonedds.git
+    cd cyclonedds
+    mkdir build
+    cd build
+    cmake ..
+    make
+    export DDSCONF_EXE=$(find ~/cyclonedds -type f -name ddsconf)
 
 .. code-block:: bash
 
@@ -118,7 +136,7 @@ Create a workspace and clone all repos:
 
    mkdir -p ~/ros2_rolling/src
    cd ~/ros2_rolling
-   wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
+   wget https://raw.githubusercontent.com/ros2/ros2/rolling/ros2.repos
    vcs import src < ros2.repos
 
 Building steps
@@ -129,7 +147,7 @@ Building steps
 .. code-block:: bash
 
     cd ~/ros2_rolling
-    git clone https://gitlab.com/qnx/ros2/ros2_qnx.git /tmp/ros2
+    git clone -b master https://gitlab.com/qnx/ros2/ros2_qnx.git /tmp/ros2
     rsync -haz /tmp/ros2/* .
     rm -rf /tmp/ros2
 
@@ -152,7 +170,7 @@ Optional: Add the sourcing command to the end of ~/.bashrc if you would like the
 
 .. code-block:: bash
 
-    ./patch-pkgxml.py --path=src -v
+    ./patch-pkgxml.py --path=src
 
 5- Before building ROS 2, some packages will need to be ignored first. Which are as following.
 
@@ -300,7 +318,7 @@ Source your development environment which includes QNX environment and ROS2:
     . ~/qnx710/qnxsdp-env-ros2.sh
     . ~/ros2_rolling/install/<your_target_arch>/local_setup.bash
 
-Create a package according to ttps://docs.ros.org/en/foxy/Tutorials/Creating-Your-First-ROS2-Package.html:
+Create a package according to https://docs.ros.org/en/rolling/Tutorials/Creating-Your-First-ROS2-Package.html:
 
 .. code-block:: bash
 
