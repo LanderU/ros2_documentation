@@ -109,6 +109,7 @@ Install development tools and ROS tools
       lark-parser
 
     # Optional: If CycloneDDS is needed then it has to be build for host first to use dssconf tool required when cross compiling
+    sudo apt install bison
     cd ~/
     git clone https://github.com/eclipse-cyclonedds/cyclonedds.git
     cd cyclonedds
