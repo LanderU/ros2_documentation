@@ -114,7 +114,7 @@ Install development tools and ROS tools
     mkdir build
     cd build
     cmake ..
-    make
+    cmake --build . --target ddsconf idlc
     export DDSCONF_EXE=$(find ~/cyclonedds -type f -name ddsconf)
     export IDLC_EXE=$(find ~/cyclonedds -type f -name idlc)
 
